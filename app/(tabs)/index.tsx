@@ -1,75 +1,93 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { Link, useRouter } from "expo-router";
+import { ActivityIndicator, Text, View, Image, FlatList, ScrollView, TouchableOpacity } from "react-native";
+import { images } from "@/constants/images";
+import { icons } from "@/constants/icons";
+import SearchBar from "@/components/SearchBar";
+import useFetch from "@/services/useFetch";
+import { fetchMovies } from "@/services/api";
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 
-export default function HomeScreen() {
+
+export default function Index() {
+  const router = useRouter();
+     const [searchQuery, setSearchQuery] = useState('');
+  const { data: movies, loading: moviesLoading, error: moviesError } = useFetch(() =>
+    fetchMovies({
+      query: searchQuery,
+    })
+  );
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <View className="flex-1 bg-primary">
+      {/* <Image className="absolute w-full z-0" source={images.bg} /> */}
+
+      <ScrollView
+        className="flex-1 px-5"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ minHeight: "100%", paddingBottom: 10 }}
+      >
+        <Image className="mt-20 mb-5 mx-auto"  source={icons.logo} />
+
+        {moviesLoading ? (
+          <ActivityIndicator size="large" color="#0000ff" className="mt-10 self-center" />
+        ) : moviesError ? (
+          <Text>Error: {moviesError?.message}</Text>
+        ) : (
+          <View className="flex-1 mt-5 ">
+
+            <SearchBar  onPress={() => router.push("/search")} placeholder="Search for a movie" value={searchQuery}  onChangeText={setSearchQuery} />
+        
+            <>
+              <Text className="text-lg text-white font-bold mt-5 mb-3">Latest Movies</Text>
+
+              <FlatList
+                data={movies}
+
+                renderItem={({ item }) => (
+                  <Link  href={`/movie/${item.imdbID}`} asChild>
+                  <TouchableOpacity>
+                  <View style={{ width: 100 }}>
+             
+                      <Image
+                        source={{ uri: item.Poster }}
+                        className="w-28 h-36 rounded-md"
+                        resizeMode="cover"
+                      />
+                 
+                    <Text
+                      className="text-white text-sm mt-2"
+                      numberOfLines={2}
+                      ellipsizeMode="tail"
+                    >
+                      {item.Title}
+                    </Text>
+                  </View>
+                  </TouchableOpacity>
+                  </Link>
+                )}
+
+
+
+                keyExtractor={(item) => item.imdbID} // 🔹 changed from item.id
+                numColumns={3}
+
+
+                columnWrapperStyle={{
+                  justifyContent: "flex-start",
+                  gap: 20,
+                  paddingRight: 3,
+                  marginLeft: 5,
+                  marginBottom: 10,
+                }}
+
+                className="mt-2 pb-32"
+                scrollEnabled={false}
+              />
+            </>
+          </View>
+        )}
+      </ScrollView>
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
-});

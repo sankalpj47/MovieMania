@@ -1,45 +1,96 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
+import { View, Text, ImageBackground,Image} from 'react-native'
+import React from 'react'
+import { Tabs } from 'expo-router'
+import { images } from '@/constants/images'
+// import { icons } from '@/constants/icons'
 
-import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
+const Tabicon= ({focused,title}: any ) => {
+  if(focused){
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
-        tabBarStyle: Platform.select({
-          ios: {
-            // Use a transparent background on iOS to show the blur effect
-            position: 'absolute',
-          },
-          default: {},
-        }),
-      }}>
-      <Tabs.Screen
+    <ImageBackground
+      source={images.highlight}
+      className='flex flex-row w-full flex-1 min-w-[110px] min-h-20  justify-center items-center rounded-full  overflow-hidden'
+    >
+    
+      <Text className='text-neutral-900  font-extrabold'>{title}</Text>
+    </ImageBackground>
+  )
+}
+else{
+  return (
+    <View className='flex flex-row w-full flex-1 min-w-[97px] min-h-12 justify-center items-center overflow-hidden'>
+      <Text className='text-gray-300'>{title}</Text>
+    </View>
+  )
+}
+}
+
+const _layout = () => {
+  return (
+    <Tabs screenOptions={{ tabBarShowLabel: false, 
+      tabBarStyle : {
+        backgroundColor: '#0f0D23',
+        // height: '13%',
+        marginHorizontal : 20,
+        marginBottom : 56,
+        height: 52,
+        position: 'absolute',
+        overflow: 'hidden',
+        borderRadius: 32,
+        borderWidth : 1,
+      },
+      tabBarItemStyle : {
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'relative',
+        top: 10,
+      }
+    }}>
+        <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
+            title: "Home",
+          headerShown: false,
+          tabBarIcon:({focused}) => (
+            <Tabicon 
+             focused={focused}
+             title="Home"
+            />
+          )
+        }} />
+
+        <Tabs.Screen
+        name="search"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
-        }}
-      />
+           title: "Search",
+         headerShown: false,
+         tabBarIcon:({focused}) => (
+           <Tabicon 
+            focused={focused}
+            title="Search"
+           />
+         )
+        }} />
+         
+       
+         <Tabs.Screen
+        name="saved"
+        options={{
+            title: "Saved",
+          headerShown: false,
+          tabBarIcon:({focused}) => (
+            <Tabicon 
+             focused={focused}
+             title="Saved"
+            />
+          )
+        }} />
+
+
     </Tabs>
-  );
+  )
 }
+
+export default _layout
