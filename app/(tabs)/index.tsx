@@ -7,8 +7,6 @@ import SearchBar from "@/components/SearchBar";
 import useFetch from "@/services/useFetch";
 import { fetchMovies } from "@/services/api";
 
-
-
 export default function Index() {
   const router = useRouter();
      const [searchQuery, setSearchQuery] = useState('');
@@ -17,10 +15,15 @@ export default function Index() {
       query: searchQuery,
     })
   );
-
+  
   return (
+
     <View className="flex-1 bg-primary">
-      {/* <Image className="absolute w-full z-0" source={images.bg} /> */}
+   <Image
+  className="absolute z-0 w-full h-full"
+  source={images.bg}
+  resizeMode="cover" 
+/>
 
       <ScrollView
         className="flex-1 px-5"

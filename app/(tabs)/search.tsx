@@ -9,6 +9,7 @@ import { icons } from '@/constants/icons'
 import SearchBar from '@/components/SearchBar'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 
+
 const search = () => {
    const [searchQuery, setSearchQuery] = useState('');
 
@@ -35,12 +36,13 @@ useEffect(() => {
   return () => clearTimeout(timeoutId);
 }, [searchQuery]);
 
-
-
-  
   return (
     <View className='flex-1 bg-primary'>
-      {/* <Image source={images.bg} className='absolute w-full z-0 flex-1'  resizeMode='cover' /> */}
+       <Image
+      className="absolute z-0 w-full h-full"
+      source={images.bg}
+      resizeMode="cover" 
+    />
 
       <ScrollView   className="flex-1 px-5"
         showsVerticalScrollIndicator={false}
@@ -125,7 +127,7 @@ useEffect(() => {
                     ListEmptyComponent={
                       !loading && !error ?(
                         <View className='mt-10 px-5'>
-                          <Text className="text-gray-500 text-center">
+                          <Text className="text-white text-center">
                            {searchQuery.trim() ? `No results found` : "Search for a movie!"}
 
                           </Text>
